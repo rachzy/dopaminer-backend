@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Session } from 'src/session/entities/session.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Account {
@@ -16,10 +17,13 @@ export class Account {
   password: string;
 
   @Column('timestamp with time zone', { default: 'NOW()' })
-  lastAuthentication: number;
+  lastAuthentication: string;
 
   @Column('timestamp with time zone', { default: 'NOW()' })
-  lastConnection: Date;
+  lastConnection: string;
+
+  @OneToMany(() => Session, (session) => session.account)
+  sessions: Session[];
 
   constructor(account: Partial<Account>) {
     Object.assign(this, account);

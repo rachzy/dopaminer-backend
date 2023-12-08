@@ -3,6 +3,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { createAccount } from './dto/create-account.dto';
 import { Account } from './entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SaveAccount } from './dto/save-account.dto';
 
 @Injectable()
 export class AccountService {
@@ -12,9 +13,25 @@ export class AccountService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async createAccount(account: createAccount) {
-    const newAccount = new Account(account);
+  async createAccount(account: createAccount): Promise<Account> {
+    const saveAccount: SaveAccount = {
+      ...account,
+      lastAuthentication: new Date().toISOString(),
+      lastConnection: new Date().toISOString(),
+    };
+    const newAccount = new Account(saveAccount);
+
     return await this.entityManager.save(newAccount);
+  }
+
+  async authenticate(email: string, password: string): Promise<Account | null> {
+    const account = await this.accountRepository.findOneBy({ email, password });
+    if (!account) return null;
+
+    account.lastAuthentication = new Date().toISOString();
+    account.lastConnection = new Date().toISOString();
+    await this.entityManager.save(account);
+    return account;
   }
 
   async findAccount(id: number): Promise<Account> {
