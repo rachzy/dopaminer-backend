@@ -5,11 +5,16 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SessionService } from './session.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { AccountService } from 'src/accounts/account.service';
+import { UnauthGuard } from 'src/guards/unauth/unauth.guard';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { CookieSessionDto } from './dto/cookie-session.dto';
 
 @Controller('session')
 export class SessionController {
@@ -19,6 +24,7 @@ export class SessionController {
   ) {}
 
   @Post('create')
+  @UseGuards(UnauthGuard)
   async create(
     @Req() request: Request,
     @Res() response: Response,
@@ -60,6 +66,26 @@ export class SessionController {
     response.send({
       id: account.id,
       lastAuthentication: account.lastAuthentication,
+    });
+  }
+
+  @Delete('logout')
+  @UseGuards(AuthGuard)
+  async logout(@Req() request: Request, @Res() response: Response) {
+    const { USER_ID, SESSION_ID, SESSION_TOKEN } =
+      request.cookies as CookieSessionDto;
+    await this.sessionService.destroySession({
+      USER_ID,
+      SESSION_ID,
+      SESSION_TOKEN,
+    });
+
+    response.clearCookie('USER_ID');
+    response.clearCookie('SESSION_ID');
+    response.clearCookie('SESSION_TOKEN');
+
+    response.send({
+      message: 'Successfully logged out.',
     });
   }
 }

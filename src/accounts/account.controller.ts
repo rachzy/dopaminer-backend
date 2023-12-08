@@ -3,12 +3,14 @@ import { createAccount } from './dto/create-account.dto';
 import { AccountService } from './account.service';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { Request } from 'express';
+import { UnauthGuard } from 'src/guards/unauth/unauth.guard';
 
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post('create')
+  @UseGuards(UnauthGuard)
   async createAccount(@Body() account: createAccount) {
     return await this.accountService.createAccount(account);
   }
