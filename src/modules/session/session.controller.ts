@@ -11,7 +11,7 @@ import {
 import { Request, Response } from 'express';
 import { SessionService } from './session.service';
 import { CreateSessionDto } from './dto/create-session.dto';
-import { AccountService } from 'src/accounts/account.service';
+import { AccountService } from 'src/modules/accounts/account.service';
 import { UnauthGuard } from 'src/guards/unauth/unauth.guard';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { CookieSessionDto } from './dto/cookie-session.dto';

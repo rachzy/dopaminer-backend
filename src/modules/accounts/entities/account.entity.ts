@@ -1,4 +1,4 @@
-import { Session } from 'src/session/entities/session.entity';
+import { Session } from 'src/modules/session/entities/session.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

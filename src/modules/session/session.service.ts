@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { SaveSession } from './dto/save-session.dto';
-import { Account } from 'src/accounts/entities/account.entity';
+import { Account } from 'src/modules/accounts/entities/account.entity';
 import { addDays } from 'date-fns';
 import { CookieSessionDto } from './dto/cookie-session.dto';
 
