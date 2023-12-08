@@ -4,6 +4,7 @@ import { createAccount } from './dto/create-account.dto';
 import { Account } from './entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SaveAccount } from './dto/save-account.dto';
+import { RetrievedAccountDto } from './dto/retrieved-account.dto';
 
 @Injectable()
 export class AccountService {
@@ -35,6 +36,9 @@ export class AccountService {
   }
 
   async findAccount(id: number): Promise<Account> {
-    return await this.accountRepository.findOneBy({ id });
+    return await this.accountRepository.findOne({
+      where: { id },
+      select: { ...RetrievedAccountDto },
+    });
   }
 }

@@ -1,13 +1,8 @@
-import {
-  Body,
-  Controller,
-  Post,
-  ParseIntPipe,
-  Query,
-  Get,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req, Get, UseGuards } from '@nestjs/common';
 import { createAccount } from './dto/create-account.dto';
 import { AccountService } from './account.service';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { Request } from 'express';
 
 @Controller('account')
 export class AccountController {
@@ -18,8 +13,10 @@ export class AccountController {
     return await this.accountService.createAccount(account);
   }
 
-  @Get('get')
-  async getAccount(@Query('id', ParseIntPipe) id: number) {
-    return await this.accountService.findAccount(id);
+  @Get('getData')
+  @UseGuards(AuthGuard)
+  async getAccount(@Req() request: Request) {
+    const { USER_ID } = request.cookies;
+    return await this.accountService.findAccount(parseInt(USER_ID));
   }
 }

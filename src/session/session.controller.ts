@@ -1,10 +1,7 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Param,
-  Delete,
   Req,
   Res,
   UnauthorizedException,

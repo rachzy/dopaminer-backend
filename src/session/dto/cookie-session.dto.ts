@@ -1,5 +1,5 @@
-export class ICookieSessionDto {
-  USER_ID: string;
-  SESSION_ID: string;
+export class CookieSessionDto {
+  USER_ID: number;
+  SESSION_ID: number;
   SESSION_TOKEN: string;
 }

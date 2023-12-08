@@ -6,6 +6,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { SaveSession } from './dto/save-session.dto';
 import { Account } from 'src/accounts/entities/account.entity';
 import { addDays } from 'date-fns';
+import { CookieSessionDto } from './dto/cookie-session.dto';
 
 @Injectable()
 export class SessionService {
@@ -32,5 +33,31 @@ export class SessionService {
     return this.entityManager.save(newSession);
   }
 
-  async validateSession(USER_ID: string, SESSION_ID: string, SESSION_TOKEN: string)
+  async validateSession({
+    USER_ID,
+    SESSION_ID,
+    SESSION_TOKEN,
+  }: CookieSessionDto): Promise<boolean> {
+    const session = await this.sessionsRepository.findOneBy({
+      account: { id: USER_ID },
+      id: SESSION_ID,
+      token: SESSION_TOKEN,
+    });
+
+    if (!session) return false;
+
+    const { expirationDate, valid } = session;
+
+    if (!valid) return false;
+
+    const expirationTimestamp = new Date(expirationDate).getTime();
+
+    if (expirationTimestamp < Date.now()) {
+      session.valid = false;
+      await this.entityManager.save(session);
+      return false;
+    }
+
+    return true;
+  }
 }
