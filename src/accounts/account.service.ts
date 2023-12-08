@@ -42,13 +42,17 @@ export class AccountService {
     });
   }
 
-  async findAccountByEmail(
-    email: string,
-    verified?: boolean,
-  ): Promise<Account> {
+  async findAccountByEmail(email: string, verified: boolean): Promise<Account> {
     return await this.accountRepository.findOne({
-      where: { email },
-      select: { id: true, email: verified },
+      where: { email, verified },
+      select: { id: true, email: true },
     });
+  }
+
+  async verifyAccount(id: number) {
+    const account = await this.accountRepository.findOneBy({ id });
+    account.verified = true;
+
+    await this.entityManager.save(account);
   }
 }

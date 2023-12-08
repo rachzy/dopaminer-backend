@@ -36,4 +36,29 @@ export class AccountController {
     const { USER_ID } = request.cookies;
     return await this.accountService.findAccountById(parseInt(USER_ID));
   }
+
+  @Post('verify')
+  @UseGuards(AuthGuard)
+  async verifyAccount(@Req() request: Request) {
+    const { USER_ID } = request.cookies;
+
+    const account = await this.accountService.findAccountById(
+      parseInt(USER_ID),
+    );
+    const checkForDoubleAccount = await this.accountService.findAccountByEmail(
+      account.email,
+      true,
+    );
+
+    if (checkForDoubleAccount) {
+      throw new ConflictException(
+        'Já existe uma conta verificada com este e-mail!',
+      );
+    }
+
+    await this.accountService.verifyAccount(parseInt(USER_ID));
+    return {
+      message: 'Conta verificada com sucesso!',
+    };
+  }
 }
