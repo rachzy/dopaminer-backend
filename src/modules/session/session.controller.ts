@@ -15,6 +15,8 @@ import { AccountService } from 'src/modules/accounts/account.service';
 import { UnauthGuard } from 'src/guards/unauth/unauth.guard';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { CookieSessionDto } from './dto/cookie-session.dto';
+import { ZodValidationPipe } from 'src/pipes/zodValidation.pipe';
+import { createSessionPipe } from './pipes/createSession.pipe';
 
 @Controller('session')
 export class SessionController {
@@ -28,7 +30,8 @@ export class SessionController {
   async create(
     @Req() request: Request,
     @Res() response: Response,
-    @Body() createSessionDto: CreateSessionDto,
+    @Body(new ZodValidationPipe(createSessionPipe))
+    createSessionDto: CreateSessionDto,
   ) {
     const { email, password } = createSessionDto;
 
