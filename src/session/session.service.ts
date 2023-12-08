@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
@@ -59,5 +59,27 @@ export class SessionService {
     }
 
     return true;
+  }
+
+  async destroySession({
+    USER_ID,
+    SESSION_ID,
+    SESSION_TOKEN,
+  }: CookieSessionDto) {
+    if (!USER_ID || !SESSION_ID || !SESSION_TOKEN) {
+      throw new BadRequestException(
+        `You don't have a currently active session`,
+      );
+    }
+
+    const session = await this.sessionsRepository.findOneBy({
+      account: { id: USER_ID },
+      id: SESSION_ID,
+      token: SESSION_TOKEN,
+    });
+
+    if (!session) return;
+    session.valid = false;
+    await this.entityManager.save(session);
   }
 }
