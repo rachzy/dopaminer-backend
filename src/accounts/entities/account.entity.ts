@@ -22,6 +22,9 @@ export class Account {
   @Column('timestamp with time zone', { default: 'NOW()' })
   lastConnection: string;
 
+  @Column('boolean', { default: false })
+  verified: boolean;
+
   @OneToMany(() => Session, (session) => session.account)
   sessions: Session[];
 

@@ -35,10 +35,20 @@ export class AccountService {
     return account;
   }
 
-  async findAccount(id: number): Promise<Account> {
+  async findAccountById(id: number): Promise<Account> {
     return await this.accountRepository.findOne({
       where: { id },
       select: { ...RetrievedAccountDto },
+    });
+  }
+
+  async findAccountByEmail(
+    email: string,
+    verified?: boolean,
+  ): Promise<Account> {
+    return await this.accountRepository.findOne({
+      where: { email },
+      select: { id: true, email: verified },
     });
   }
 }

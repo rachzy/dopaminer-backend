@@ -3,4 +3,5 @@ export const RetrievedAccountDto = {
   email: true,
   lastAuthentication: true,
   lastConnection: true,
+  verified: true,
 };
