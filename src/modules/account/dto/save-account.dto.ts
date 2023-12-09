@@ -1,3 +1,6 @@
-import { Account } from '../entities/account.entity';
-
-export type SaveAccount = Omit<Account, 'id' | 'sessions' | 'verified'>;
+export type SaveAccount = {
+  email: string;
+  password: string;
+  lastAuthentication: string;
+  lastConnection: string;
+};

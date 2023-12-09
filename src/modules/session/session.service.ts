@@ -12,7 +12,7 @@ import { CookieSessionDto } from './dto/cookie-session.dto';
 export class SessionService {
   constructor(
     @InjectRepository(Session)
-    private readonly sessionsRepository: Repository<Session>,
+    private readonly sessionRepository: Repository<Session>,
     private readonly entityManager: EntityManager,
   ) {}
   async create(ipv4: string, account: Account): Promise<Session> {
@@ -38,7 +38,7 @@ export class SessionService {
     SESSION_ID,
     SESSION_TOKEN,
   }: CookieSessionDto): Promise<boolean> {
-    const session = await this.sessionsRepository.findOneBy({
+    const session = await this.sessionRepository.findOneBy({
       account: { id: USER_ID },
       id: SESSION_ID,
       token: SESSION_TOKEN,
@@ -72,7 +72,7 @@ export class SessionService {
       );
     }
 
-    const session = await this.sessionsRepository.findOneBy({
+    const session = await this.sessionRepository.findOneBy({
       account: { id: USER_ID },
       id: SESSION_ID,
       token: SESSION_TOKEN,
