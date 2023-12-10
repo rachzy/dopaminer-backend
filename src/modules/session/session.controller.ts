@@ -36,7 +36,7 @@ export class SessionController {
     const { email, password } = createSessionDto;
 
     const account = await this.accountService.authenticate(email, password);
-    if (!account) throw new UnauthorizedException('Invalid user!');
+    if (!account) throw new UnauthorizedException('Invalid credentials!');
 
     const ipv4 = request.ip || request.socket.remoteAddress;
 
