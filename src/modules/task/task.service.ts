@@ -94,11 +94,16 @@ export class TaskService {
   }
 
   async setTaskCompleted(taskId: number): Promise<Task> {
-    return this.taskRepository.save({
+    const task = await this.taskRepository.findOne({ where: { id: taskId } });
+
+    const patchedTask: Partial<Task> = {
       id: taskId,
       completed: true,
       dateOfCompletion: new Date().toISOString(),
-    });
+      points: task.points,
+    };
+
+    return this.taskRepository.save(patchedTask);
   }
 
   async deleteTask(taskId: number) {
