@@ -1,5 +1,13 @@
 import { Account } from 'src/modules/account/entities/account.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Task } from 'src/modules/task/entities/task.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -18,6 +26,9 @@ export class User {
   @OneToOne(() => Account, (account) => account.user)
   @JoinColumn()
   account: Account;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);

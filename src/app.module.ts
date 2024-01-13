@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { SessionModule } from './modules/session/session.module';
 import { UserModule } from './modules/user/user.module';
+import { TaskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { UserModule } from './modules/user/user.module';
     AccountModule,
     SessionModule,
     UserModule,
+    TaskModule,
   ],
   controllers: [],
   providers: [],
