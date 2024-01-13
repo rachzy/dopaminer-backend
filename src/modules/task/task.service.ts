@@ -20,10 +20,19 @@ export class TaskService {
   ): Promise<Partial<Task>> {
     const newDuration = new TaskDuration(createTaskDto.duration);
 
+    const pointsByTaskDifficulty = {
+      1: 10,
+      2: 25,
+      3: 50,
+      4: 100,
+      5: 200,
+    };
+
     const saveTask = {
       ...createTaskDto,
       user: owner,
       duration: newDuration,
+      points: pointsByTaskDifficulty[createTaskDto.difficulty],
     };
 
     const newTask = new Task(saveTask);
@@ -53,6 +62,27 @@ export class TaskService {
     return task;
   }
 
+  async getAllCompletedTasks(ownerId: number): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      where: { user: { accountId: ownerId }, completed: true },
+    });
+    return tasks;
+  }
+
+  async getAllCompletedTasksOnCurrentWeek(ownerId: number): Promise<Task[]> {
+    const completedTasks = await this.getAllCompletedTasks(ownerId);
+
+    // Filter all completedTasks by only the ones that have been completed in the last 7 days
+    const tasks = completedTasks.filter((task) => {
+      const taskDate = new Date(task.dateOfCompletion);
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() - 7);
+      return taskDate >= currentDate;
+    });
+
+    return tasks;
+  }
+
   async editTask(taskId: number, task: Partial<Task>) {
     const newTask: Partial<Task> = {
       ...task,
@@ -61,6 +91,14 @@ export class TaskService {
     const patchedTask = new Task(newTask);
 
     return this.taskRepository.save(patchedTask);
+  }
+
+  async setTaskCompleted(taskId: number): Promise<Task> {
+    return this.taskRepository.save({
+      id: taskId,
+      completed: true,
+      dateOfCompletion: new Date().toISOString(),
+    });
   }
 
   async deleteTask(taskId: number) {

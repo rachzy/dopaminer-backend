@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  ParseBoolPipe,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -22,6 +25,7 @@ import { ValidUserInterceptor } from 'src/interceptors/valid-user/valid-user.int
 import { CheckTaskViabilityPipe } from './pipes/check-task-viability/check-task-viability.pipe';
 import { createTaskSchema } from './pipes/create-task/create-task.pipe';
 import { editTaskSchema } from './pipes/edit-task/edit-task.pipe';
+import { CheckTaskCompletionPipe } from './pipes/check-task-completion/check-task-completion.pipe';
 
 @Controller('task')
 @UseGuards(AuthGuard)
@@ -53,19 +57,44 @@ export class TaskController {
   }
 
   @Get('getAll')
-  async getAllTasks(@Req() request: Request) {
+  async getAllTasks(
+    @Query('completed', new DefaultValuePipe(false), ParseBoolPipe)
+    completed: boolean,
+    @Query('lastWeek', new DefaultValuePipe(false), ParseBoolPipe)
+    lastWeek: boolean,
+    @Req() request: Request,
+  ) {
     const { USER_ID } = request.cookies;
-    const tasks = await this.taskService.getAllTasks(parseInt(USER_ID));
 
+    if (completed) {
+      if (lastWeek) {
+        return await this.taskService.getAllCompletedTasksOnCurrentWeek(
+          parseInt(USER_ID),
+        );
+      }
+      return await this.taskService.getAllCompletedTasks(parseInt(USER_ID));
+    }
+
+    const tasks = await this.taskService.getAllTasks(parseInt(USER_ID));
     return tasks;
   }
 
   @Put('edit')
   async editTask(
     @Query('id', ParseIntPipe, CheckTaskViabilityPipe) taskId: number,
-    @Body(new ZodValidationPipe(editTaskSchema)) task: Partial<Task>,
+    @Body(new ZodValidationPipe(editTaskSchema))
+    task: Partial<Task>,
   ) {
     const patchedTask = await this.taskService.editTask(taskId, task);
+    return patchedTask;
+  }
+
+  @Patch('complete')
+  async completeTask(
+    @Query('id', ParseIntPipe, CheckTaskViabilityPipe, CheckTaskCompletionPipe)
+    taskId: number,
+  ) {
+    const patchedTask = await this.taskService.setTaskCompleted(taskId);
     return patchedTask;
   }
 

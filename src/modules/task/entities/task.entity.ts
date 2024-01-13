@@ -34,6 +34,9 @@ export class Task {
   @Column('int')
   difficulty: number;
 
+  @Column('int', { default: 10 })
+  points: number;
+
   @Column('date')
   date: string;
 
@@ -48,6 +51,9 @@ export class Task {
 
   @Column('boolean', { default: false })
   completed: boolean;
+
+  @Column('timestamp with time zone', { nullable: true })
+  dateOfCompletion: string;
 
   @ManyToOne(() => User, (user) => user.tasks)
   @JoinColumn()
