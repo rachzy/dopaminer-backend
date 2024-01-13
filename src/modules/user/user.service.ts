@@ -13,10 +13,15 @@ export class UserService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async createUser(account: Account, createUser: CreateUserDto): Promise<User> {
-    const user = {
+  async createUser(
+    account: Account,
+    createUser: CreateUserDto,
+    avatar: string,
+  ): Promise<User> {
+    const user: Partial<User> = {
       ...createUser,
       account,
+      profilePicture: avatar,
     };
     const newUser = new User(user);
     await this.entityManager.save(newUser);
@@ -29,5 +34,11 @@ export class UserService {
       account: { id: userId },
     });
     return user;
+  }
+
+  async deleteUser(userId: number): Promise<void> {
+    await this.userRepository.delete(userId);
+
+    return;
   }
 }

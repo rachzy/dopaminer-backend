@@ -11,7 +11,6 @@ export const createUserSchema = z
           new Date(str).getFullYear() < new Date().getFullYear(),
         { message: 'Invalid date (must range from 1900 to 2023).' },
       ),
-    profilePicture: z.string().max(64).optional(),
   })
   .required()
   .strict();

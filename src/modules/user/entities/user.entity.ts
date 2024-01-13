@@ -20,7 +20,7 @@ export class User {
   @Column('date')
   birthday: string;
 
-  @Column({ length: 64, default: 'default_pfp.png' })
+  @Column({ length: 128, default: 'default_pfp.png' })
   profilePicture: string;
 
   @OneToOne(() => Account, (account) => account.user)
