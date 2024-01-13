@@ -4,8 +4,7 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
-  ParseFilePipeBuilder,
+  ParseFilePipe,
   ParseIntPipe,
   Post,
   Query,
@@ -44,11 +43,11 @@ export class UserController {
     @Req() request: Request,
     @Body(new ZodValidationPipe(createUserSchema)) createUserDto: CreateUserDto,
     @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 10000000 })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+      new ParseFilePipe({
+        fileIsRequired: false,
+      }),
     )
-    avatar: Express.Multer.File,
+    avatar?: Express.Multer.File,
   ) {
     const { USER_ID } = request.cookies;
     const checkForExistingUser = await this.getUser(parseInt(USER_ID));
@@ -65,7 +64,7 @@ export class UserController {
     const newUser = await this.userService.createUser(
       account,
       createUserDto,
-      avatar.filename,
+      avatar ? avatar.filename : 'default_pfp.png',
     );
     return newUser;
   }
