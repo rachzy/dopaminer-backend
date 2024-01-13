@@ -29,6 +29,9 @@ export class TaskService {
     const newTask = new Task(saveTask);
     await this.entityManager.save(newTask);
 
+    newDuration.taskId = newTask.id;
+    await this.entityManager.save(newDuration);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { user, ...task } = newTask;
 
